@@ -3,23 +3,44 @@ caterpillar
 
 Scrape Amazon Seller Central
 
-Contributors
-============
+## Installation
 
-@trobrock
+Add this line to your application's Gemfile:
 
-Test
-====
+    gem 'caterpillar'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install caterpillar
+
+## Usage
 
 ```
 rake test:coverage
 ```
 
-To-do
-=====
+```
+more soon
+```
 
-- Move tests from original repo
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+## Contributors
+
+* Trae Robrock ( https://github.com/trobrock )
+* Julio Santos ( https://github.com/julio )
+
+## To-do
+
 - Refactor
 - document
-- monkey patch mechanize to have search!
-- add Object.blank?
