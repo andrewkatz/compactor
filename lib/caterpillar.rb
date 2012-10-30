@@ -1,0 +1,5 @@
+require "mechanize"
+require "caterpillar/extensions"
+require "caterpillar/version"
+require "caterpillar/scraper"
+require "caterpillar/scraped_row"
