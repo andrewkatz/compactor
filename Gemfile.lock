@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    caterpillar (0.0.6)
+    caterpillar (0.1.0)
       mechanize
 
 GEM
