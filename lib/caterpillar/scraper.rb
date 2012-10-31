@@ -34,8 +34,8 @@ module Caterpillar
       end
 
       def self.authorized_user?
-        @agent.page.parser.css(".messageboxerror").empty? ||
-        !@agent.page.parser.css('.messageboxerror').text.include?('There was an error with your email/password combination. Please try again.')
+        message_box_error.empty? ||
+        !message_box_error.text.include?('There was an error with your email/password combination.')
       end
 
       def self.merchant_identification(credentials={})
@@ -146,6 +146,10 @@ module Caterpillar
 
       private
 
+      def message_box_error
+        @agent.page.parser.css(".messageboxerror")
+      end
+
       def slowdown_like_a_human(count)
         sleep count ** 2
       end
@@ -198,8 +202,7 @@ module Caterpillar
         @mechanize.user_agent = Mechanize::AGENT_ALIASES.
           keys.
           reject{ |k| k == "Mechanize" }.
-          to_a.
-          # suffle.
+          shuffle.
           first
       end
 
@@ -246,10 +249,6 @@ module Caterpillar
         fail Caterpillar::Amazon::UnknownReportType
       end
 
-      def get_reports_to_watch(reports_to_watch, reports)
-        _get_reports_to_watch(reports_to_watch, reports, 0)
-      end
-
       def rescue_empty_results(&block)
         3.times do
           yield
@@ -280,7 +279,7 @@ module Caterpillar
         end
       end
 
-      def _get_reports_to_watch(reports_to_watch, reports, count)
+      def get_reports_to_watch(reports_to_watch, reports, count=0)
         return if reports_to_watch.empty? || timeout_fetching_reports(reports_to_watch, reports, count)
 
         rescue_empty_results { @mechanize.get @mechanize.page.uri }
@@ -294,7 +293,7 @@ module Caterpillar
         end
 
         slowdown_like_a_human(count)
-        _get_reports_to_watch(reports_to_watch, reports, count+1)
+        get_reports_to_watch(reports_to_watch, reports, count+1)
       end
 
       def pages_to_parse
