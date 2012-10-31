@@ -1,3 +1,9 @@
+class Object
+  def blank?
+    respond_to?(:empty?) ? empty? : !self
+  end
+end
+
 module Enumerable
   def sum(identity = 0, &block)
     inject(:+) || identity
@@ -22,10 +28,4 @@ end
 
 class Mechanize::Page
   def_delegator :parser, :search!, :search!
-end
-
-class Object
-  def blank?
-    respond_to?(:empty?) ? empty? : !self
-  end
 end

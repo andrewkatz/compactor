@@ -11,7 +11,6 @@ module Caterpillar
       end
 
       def report_buttons
-        # fail UnexpectedDom if last_cell.nil?
         last_cell.search(".secondarySmallButton").map do |ele|
           Mechanize::Page::Link.new(ele.parent, @mechanize, @mechanize.page)
         end
@@ -22,15 +21,17 @@ module Caterpillar
         report_identifier = report_buttons[0].node.search(".button_label").text
         type              = ReportScraper.report_type(report_identifier)
         response_body     = @mechanize.get(report_url).body
+
         [type, response_body]
       end
 
       def reload
-        @mechanize.page.search("tr").each do |row|
+        table_rows.each do |row|
           row = ScrapedRow.new(row, @mechanize)
           return row if row.date_range == date_range
         end
-        return nil
+
+        nil
       end
 
       def request_report
@@ -52,14 +53,8 @@ module Caterpillar
       end
 
       def deposit_amount
-        if !@deposit_amount
-          deposit_cell = @node.search("td")[-2]
-          if deposit_cell
-            @deposit_amount = deposit_cell.text.gsub(/[^0-9\.]/, '').to_f
-          else
-            @deposit_amount = 0.0
-          end
-        end
+        @deposit_amount = fetch_deposit_amount if !@deposit_amount
+
         @deposit_amount
       end
 
@@ -68,6 +63,15 @@ module Caterpillar
       end
 
       private
+
+      def fetch_deposit_amount
+        deposit_cell = @node.search("td")[-2]
+        deposit_cell ? deposit_cell.text.gsub(/[^0-9\.]/, '').to_f : 0.0
+      end
+
+      def table_rows
+        @mechanize.page.search("tr")
+      end
 
       def last_cell
         @last_cell ||= @node.search("td")[-1]
