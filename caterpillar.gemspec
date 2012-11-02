@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_runtime_dependency "mechanize"
+  gem.add_runtime_dependency "jruby-openssl", '0.7.3' if RUBY_PLATFORM == "java"
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "mocha"
