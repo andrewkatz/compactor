@@ -1,5 +1,7 @@
 # caterpillar
 
+[![Build Status](https://secure.travis-ci.org/julio/caterpillar.png)](http://travis-ci.org/julio/caterpillar)
+
 Scrape Amazon Seller Central
 
 ## Installation

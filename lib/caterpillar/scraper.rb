@@ -197,12 +197,12 @@ module Caterpillar
         }
       end
 
-      # Pick a random user agent that isn't mechanize
+      # Pick a random user agent that isn't Mechanize
       def randomize_user_agent!
-        @mechanize.user_agent = Mechanize::AGENT_ALIASES.
-          keys.
-          reject{ |k| k == "Mechanize" }.
-          choice
+        agents = Mechanize::AGENT_ALIASES.keys.reject{ |k| k == "Mechanize" }
+
+        @mechanize.user_agent =
+          agents.respond_to?(:choice) ? agents.choice : agents.sample
       end
 
       def go_to_past_settlements(from, to)
