@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    caterpillar (0.1.0)
+    caterpillar (0.1.1)
       mechanize
 
 GEM
@@ -26,6 +26,7 @@ GEM
     net-http-persistent (2.8)
     nokogiri (1.5.5)
     ntlm-http (0.1.1)
+    rake (0.9.2.2)
     rcov (0.9.11)
     unf (0.0.5)
       unf_ext
@@ -40,5 +41,6 @@ DEPENDENCIES
   caterpillar!
   fakeweb
   mocha
+  rake
   rcov (= 0.9.11)
   vcr
