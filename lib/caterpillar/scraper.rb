@@ -202,8 +202,7 @@ module Caterpillar
         @mechanize.user_agent = Mechanize::AGENT_ALIASES.
           keys.
           reject{ |k| k == "Mechanize" }.
-          shuffle.
-          first
+          choice
       end
 
       def go_to_past_settlements(from, to)
