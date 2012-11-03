@@ -1,4 +1,4 @@
-module Caterpillar
+module Compactor
   module Amazon
     class AddressParseFailure < StandardError; end
     class AuthenticationError < StandardError; end
@@ -29,7 +29,7 @@ module Caterpillar
       def self.submit_form!(form)
         form.submit
       rescue Mechanize::ResponseCodeError => e
-        raise ::Caterpillar::Amazon::NotProAccountError if e.message.include?("403 => Net::HTTPForbidden")
+        raise ::Compactor::Amazon::NotProAccountError if e.message.include?("403 => Net::HTTPForbidden")
         raise # any other error just re-raise it
       end
 
@@ -48,7 +48,7 @@ module Caterpillar
         form.password = credentials[:password]
         submit_form! form
 
-        raise Caterpillar::Amazon::AuthenticationError unless authorized_user?
+        raise Compactor::Amazon::AuthenticationError unless authorized_user?
 
         form = @agent.page.forms.first
         form.developerName   = credentials[:developer_name]
@@ -245,7 +245,7 @@ module Caterpillar
         return :tsv  if text_v1_report?(report_identifier)
         return :tsv2 if text_v2_report?(report_identifier)
 
-        fail Caterpillar::Amazon::UnknownReportType
+        fail Compactor::Amazon::UnknownReportType
       end
 
       def rescue_empty_results(&block)
@@ -351,8 +351,8 @@ module Caterpillar
         form.password = password
         form.submit
 
-        raise Caterpillar::Amazon::AuthenticationError if bad_login?
-        raise Caterpillar::Amazon::LockedAccountError  if locked_account?
+        raise Compactor::Amazon::AuthenticationError if bad_login?
+        raise Compactor::Amazon::LockedAccountError  if locked_account?
       end
 
       def bad_login?

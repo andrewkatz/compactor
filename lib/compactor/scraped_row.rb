@@ -1,4 +1,4 @@
-module Caterpillar
+module Compactor
   module Amazon
     class ScrapedRow
       def initialize(node, mechanize)

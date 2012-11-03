@@ -1,4 +1,4 @@
-# caterpillar
+# Compactor
 
 [![Build Status](https://secure.travis-ci.org/julio/caterpillar.png)](http://travis-ci.org/julio/caterpillar)
 
@@ -8,7 +8,7 @@ Scrape Amazon Seller Central
 
 Add this line to your application's Gemfile:
 
-    gem 'caterpillar'
+    gem 'compactor'
 
 And then execute:
 
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install caterpillar
+    $ gem install compactor
 
 ## Usage
 

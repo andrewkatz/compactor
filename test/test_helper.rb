@@ -2,7 +2,7 @@ require "rubygems"
 require "test/unit"
 require "vcr"
 require "mechanize"
-require "caterpillar"
+require "compactor"
 require "mocha"
 
 VCR.configure do |vcr|
@@ -11,7 +11,7 @@ VCR.configure do |vcr|
 end
 FakeWeb.allow_net_connect = false
 
-class Caterpillar::Amazon::ReportScraper
+class Compactor::Amazon::ReportScraper
   def slowdown_like_a_human(count)
     # do not slowdown
   end

@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "caterpillar/version"
+require "compactor/version"
 
 Gem::Specification.new do |gem|
-  gem.name        = "caterpillar"
-  gem.version     = Caterpillar::VERSION
+  gem.name        = "compactor"
+  gem.version     = Compactor::VERSION
   gem.authors     = ["Julio Santos"]
   gem.email       = ["julio@morgane.com"]
   gem.homepage    = ""
   gem.summary     = "Scrape Amazon Seller Central"
   gem.description = "Scrape Amazon Seller Central"
 
-  gem.rubyforge_project = "caterpillar"
+  gem.rubyforge_project = "compactor"
 
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

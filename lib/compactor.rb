@@ -1,0 +1,5 @@
+require "mechanize"
+require "compactor/extensions"
+require "compactor/version"
+require "compactor/scraper"
+require "compactor/scraped_row"
