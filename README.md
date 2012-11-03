@@ -1,6 +1,6 @@
 # Compactor
 
-[![Build Status](https://secure.travis-ci.org/julio/caterpillar.png)](http://travis-ci.org/julio/caterpillar)
+[![Build Status](https://secure.travis-ci.org/julio/compactor.png)](http://travis-ci.org/julio/compactor)
 
 Scrape Amazon Seller Central
 
