@@ -18,12 +18,16 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency "mechanize"
-  gem.add_runtime_dependency "jruby-openssl", '0.7.3' if RUBY_PLATFORM == "java"
+  gem.add_runtime_dependency "mechanize", "2.4"
+
+  if RUBY_PLATFORM == "java"
+    gem.add_runtime_dependency "jruby-openssl", '0.7.3'
+    gem.add_runtime_dependency "nokogiri", "1.5.0.beta.2"
+  end
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "mocha"
-  gem.add_development_dependency "vcr"
+  gem.add_development_dependency "vcr", "~>2.0.0"
   gem.add_development_dependency "fakeweb"
-  gem.add_development_dependency "rcov", '0.9.11'
+  gem.add_development_dependency "rcov", "0.9.11"
 end
