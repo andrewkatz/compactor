@@ -26,7 +26,7 @@ Gem::Specification.new do |gem|
   end
 
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "mocha"
+  gem.add_development_dependency "mocha", "0.12.1"
   gem.add_development_dependency "vcr", "~>2.0.0"
   gem.add_development_dependency "fakeweb"
   gem.add_development_dependency "rcov", "0.9.11"

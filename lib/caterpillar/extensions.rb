@@ -1,13 +1,5 @@
 class Object
-  def blank?
-    respond_to?(:empty?) ? empty? : !self
-  end
-end
-
-module Enumerable
-  def sum(identity = 0, &block)
-    inject(:+) || identity
-  end
+  def blank?; respond_to?(:empty?) ? empty? : !self; end
 end
 
 module Nokogiri
