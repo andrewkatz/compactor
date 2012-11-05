@@ -13,9 +13,7 @@ module Compactor
     AMAZON_COM_MARKETPLACE_ID = 'ATVPDKIKX0DER'
 
     class ReportScraper
-      def initialize(email, password, merchant_id)
-        @merchant_id = merchant_id
-
+      def initialize(user_credentials={})
         @mechanize = Mechanize.new
         @mechanize.max_file_buffer               = 4 * 1024 * 1024
         @mechanize.max_history                   = 2
@@ -23,49 +21,7 @@ module Compactor
         @mechanize.agent.http.reuse_ssl_sessions = false
 
         randomize_user_agent!
-        login_to_seller_central email, password
-      end
-
-      def self.submit_form!(form)
-        form.submit
-      rescue Mechanize::ResponseCodeError => e
-        raise ::Compactor::Amazon::NotProAccountError if e.message.include?("403 => Net::HTTPForbidden")
-        raise # any other error just re-raise it
-      end
-
-      def self.authorized_user?
-        message_box_error.empty? ||
-        !message_box_error.text.include?('There was an error with your email/password combination.')
-      end
-
-      def self.merchant_identification(credentials={})
-        @agent = Mechanize.new
-        @agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        @agent.agent.http.reuse_ssl_sessions = false
-        @agent.get 'https://sellercentral.amazon.com/gp/mws/registration/register.html'
-        form = @agent.page.forms.first
-        form.email    = credentials[:email]
-        form.password = credentials[:password]
-        submit_form! form
-
-        raise Compactor::Amazon::AuthenticationError unless authorized_user?
-
-        form = @agent.page.forms.first
-        form.developerName   = credentials[:developer_name]
-        form.devMWSAccountId = credentials[:dev_account_id]
-        form.radiobutton_with(:value => 'devAuthorization').checked=true
-        form.submit
-
-        form = @agent.page.forms.first
-        form.checkbox_with(:name => 'agreeCheckBox').checked=true
-        form.checkbox_with(:name => 'understandCheckBox').checked=true
-        form.submit
-
-        @agent.page.forms.first.submit
-        merchant_id    = @agent.page.parser.xpath('//table[@class="registration-key-table"]/tr[2]/td[1]').text
-        marketplace_id = @agent.page.parser.xpath('//table[@class="registration-key-table"]/tr[3]/td[1]').text
-
-        [merchant_id, marketplace_id]
+        login_to_seller_central user_credentials[:email], user_credentials[:password]
       end
 
       def marketplaces
@@ -146,10 +102,6 @@ module Compactor
 
       private
 
-      def self.message_box_error
-        @agent.page.parser.css(".messageboxerror")
-      end
-
       def slowdown_like_a_human(count)
         sleep count ** 2
       end
@@ -208,8 +160,10 @@ module Compactor
       def go_to_past_settlements(from, to)
         from = CGI.escape(from)
         to   = CGI.escape(to)
-
         @mechanize.get "https://sellercentral.amazon.com/gp/payments-account/past-settlements.html?endDate=#{to}&startDate=#{from}&pageSize=Ten"
+      rescue Mechanize::ResponseCodeError => e
+        raise ::Compactor::Amazon::NotProAccountError if e.message["403 => Net::HTTPForbidden"]
+        raise # any other error just re-raise it as is
       end
 
       def get_reports
