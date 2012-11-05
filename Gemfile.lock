@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    compactor (0.1.6)
+    compactor (0.1.7)
       mechanize (= 2.4)
 
 GEM
