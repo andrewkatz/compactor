@@ -45,3 +45,4 @@ reports_by_type = scraper.reports(1.month.ago, Time.now)
 ## To-do
 
 - Refactor
+- 100% coverage
