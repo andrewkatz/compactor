@@ -5,11 +5,8 @@ end
 class Date
   def self.parse_to_us_format(date)
     if date.is_a? String
-      if date.include?('-')
-        date = Date.strptime(date, "%Y-%m-%d")
-      else
-        date = Date.strptime(date, "%m/%d/%Y")
-      end
+      date = date['-'] ? 
+        Date.strptime(date, "%Y-%m-%d") : Date.strptime(date, "%m/%d/%Y")
     end
     date.strftime("%m/%d/%y")
   end
