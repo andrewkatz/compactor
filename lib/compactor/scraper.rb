@@ -292,10 +292,7 @@ module Compactor
       end
 
       def parse_dates(from, to)
-        from = Date.parse(from.to_s).strftime("%m/%d/%y")
-        to   = Date.parse(to.to_s).strftime("%m/%d/%y")
-
-        [from, to]
+        [ Date.parse_to_us_format(from.to_s), Date.parse_to_us_format(to.to_s) ]
       end
 
       def login_to_seller_central(email, password)
