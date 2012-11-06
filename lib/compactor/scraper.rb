@@ -1,3 +1,5 @@
+# encoding: utf-8 # make the regexes ruby 1.9 friendly
+
 module Compactor
   module Amazon
     class AddressParseFailure < StandardError; end
@@ -88,8 +90,10 @@ module Compactor
           begin
             tr = @mechanize.page.search!("//tr[@class='list-row']/td[@class='data-display-field'][text()=\"Contact Buyer:\"]").first.parent
             td = tr.search!("td[2]")
+
             order["BuyerName"] = td.text.strip
             td = @mechanize.page.search!("//tr[@class='list-row']/td[@class='data-display-field']/strong[text()='Shipping Address:']").first.parent
+
             addr_lines = td.children.map(&:text).reject { |l| l.blank? || l =~ /^Shipping Address/ }
             order["ShippingAddress"] = parse_address_lines!(addr_lines)
           rescue Exception => e
