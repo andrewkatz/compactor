@@ -24,8 +24,9 @@ Or install it yourself as:
 rake test:coverage
 ```
 
-```
-more soon
+```ruby
+scraper = Compactor::Amazon::ReportScraper.new(:email => "me@there.com", :password => "secret")
+reports_by_type = scraper.reports(1.month.ago, Time.now)
 ```
 
 ## Contributing
@@ -44,4 +45,3 @@ more soon
 ## To-do
 
 - Refactor
-- document
