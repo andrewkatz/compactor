@@ -76,7 +76,6 @@ module Compactor
       def reports(from, to)
         from, to = parse_dates(from, to)
         go_to_past_settlements(from, to)
-
         get_reports
       end
 
@@ -178,10 +177,8 @@ module Compactor
             reports[report_type] ||= []
             reports[report_type] << report_streams
           end
-
           page_num += 1
         end while pages_to_parse
-
         reports.each { |type, streams| streams.flatten! }
       end
 
@@ -276,7 +273,6 @@ module Compactor
       def get_reports_in_page
         reports_to_watch = []
         reports = {}
-
         return reports if page_has_no_results?
 
         report_rows.each do |row|

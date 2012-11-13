@@ -25,8 +25,27 @@ rake test:coverage
 ```
 
 ```ruby
-scraper = Compactor::Amazon::ReportScraper.new(:email => "me@there.com", :password => "secret")
-reports_by_type = scraper.reports(1.month.ago, Time.now)
+def scrape(email, password, from, to)
+  scraper = Compactor::Amazon::ReportScraper.new(:email => email, :password => password)
+  marketplaces = scraper.marketplaces
+
+  marketplaces.each do |marketplace|
+    scraper.select_marketplace marketplace[1]
+
+    puts "Marketplace: #{marketplace[1]}"
+    while from < to
+      begin
+        reports_by_type = scraper.reports(from, to)
+        puts "There are #{reports_by_type.size} reports between #{start_page_date} and #{end_page_date}"
+      rescue Exception => e
+        puts "ERROR: #{e.message} - USER: #{email}"
+      end
+      from += 1.week
+    end
+  end
+end
+
+scrape "me@there.com", :password => "secret", DateTime.parse("1/1/2012"), DateTime.now
 ```
 
 ## Contributing

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    compactor (0.1.8)
+    compactor (0.1.9)
       mechanize (= 2.4)
 
 GEM
@@ -25,14 +25,12 @@ GEM
     net-http-digest_auth (1.2.1)
     net-http-persistent (2.8)
     nokogiri (1.5.5)
-    nokogiri (1.5.5-java)
     ntlm-http (0.1.1)
     rake (0.9.2.2)
     rcov (0.9.11)
     rcov (0.9.11-java)
     unf (0.0.5)
       unf_ext
-    unf (0.0.5-java)
     unf_ext (0.0.5)
     vcr (2.0.1)
     webrobots (0.0.13)
