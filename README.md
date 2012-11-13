@@ -29,14 +29,20 @@ def scrape(email, password, from, to)
   scraper = Compactor::Amazon::ReportScraper.new(:email => email, :password => password)
   marketplaces = scraper.marketplaces
 
+  original_from = from
+  original_to   = to
+
   marketplaces.each do |marketplace|
     scraper.select_marketplace marketplace[1]
+
+    from = original_from
+    to   = original_to
 
     puts "Marketplace: #{marketplace[1]}"
     while from < to
       begin
         reports_by_type = scraper.reports(from, to)
-        puts "There are #{reports_by_type.size} reports between #{start_page_date} and #{end_page_date}"
+        puts "There are #{reports_by_type.size} reports between #{from.to_date} and #{to.to_date}"
       rescue Exception => e
         puts "ERROR: #{e.message} - USER: #{email}"
       end
