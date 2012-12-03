@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
 
   if RUBY_PLATFORM == "java"
     gem.add_runtime_dependency "jruby-openssl", '0.7.3'
-    gem.add_runtime_dependency "nokogiri", "1.5.0.beta.2"
+    gem.add_runtime_dependency "nokogiri", ">= 1.5.0", "< 1.5.3"
   end
 
   gem.add_development_dependency "rake"
