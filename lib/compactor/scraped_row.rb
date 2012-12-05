@@ -6,8 +6,8 @@ module Compactor
         @mechanize = mechanize
       end
 
-      def can_download_report?
-        !report_buttons.empty?
+      def can_download_xml_report?
+        has_xml_button?(report_buttons)
       end
 
       def report_buttons
@@ -17,8 +17,10 @@ module Compactor
       end
 
       def download_report
-        report_url        = report_buttons[0].node["href"]
-        report_identifier = report_buttons[0].node.search(".button_label").text
+        buttons = report_buttons
+        xml_index = index_of_xml_button(buttons)
+        report_url        = buttons[xml_index].node["href"]
+        report_identifier = buttons[xml_index].node.search(".button_label").text
         type              = ReportScraper.report_type(report_identifier)
         response_body     = @mechanize.get(report_url).body
 
@@ -75,6 +77,24 @@ module Compactor
 
       def last_cell
         @last_cell ||= @node.search("td")[-1]
+      end
+
+      private
+
+      def index_of_xml_button(buttons)
+        raise MissingReportButtons if buttons.blank? # no buttons at all!
+
+        buttons.each_with_index do |button, index|
+          return index if button.node.search(".button_label").text == "Download XML"
+        end
+
+        raise MissingXmlReport # failed to find an xml button on the collection of buttons
+      end
+
+      def has_xml_button?(buttons)
+        return false if buttons.blank?
+
+        buttons.any? { |button| button.node.search(".button_label").text == "Download XML" }
       end
     end
   end

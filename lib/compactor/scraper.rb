@@ -9,6 +9,8 @@ module Compactor
     class NoMarketplacesError < StandardError; end
     class NotProAccountError  < StandardError; end
     class UnknownReportType   < StandardError; end
+    class MissingXmlReport     < StandardError; end
+    class MissingReportButtons < StandardError; end
 
     ATTEMPTS_BEFORE_GIVING_UP = 15 # give up after 20 minutes
     MARKETPLACE_HOMEPAGE      = "https://sellercentral.amazon.com/gp/homepage.html"
@@ -241,7 +243,7 @@ module Compactor
           row = row.reload
           if row.nil?
             true
-          elsif row.can_download_report?
+          elsif row.can_download_xml_report?
             add_to_collection(reports, row)
           end
         end
@@ -276,7 +278,7 @@ module Compactor
         return reports if page_has_no_results?
 
         report_rows.each do |row|
-          if row.can_download_report?
+          if row.can_download_xml_report?
             add_to_collection(reports, row)
           elsif row.ready?
             @mechanize.transact do
