@@ -6,8 +6,8 @@ module Compactor
         @mechanize = mechanize
       end
 
-      def can_download_xml_report?
-        has_xml_button?(report_buttons)
+      def can_download_report?
+        !report_buttons.blank?
       end
 
       def report_buttons
@@ -17,10 +17,10 @@ module Compactor
       end
 
       def download_report
-        buttons = report_buttons
-        xml_index = index_of_xml_button(buttons)
-        report_url        = buttons[xml_index].node["href"]
-        report_identifier = buttons[xml_index].node.search(".button_label").text
+        buttons           = report_buttons
+        button_index      = index_of_button(buttons)
+        report_url        = buttons[button_index].node["href"]
+        report_identifier = buttons[button_index].node.search(".button_label").text
         type              = ReportScraper.report_type(report_identifier)
         response_body     = @mechanize.get(report_url).body
 
@@ -49,10 +49,17 @@ module Compactor
       # if it's not processing, open or in progress. Also the "regenerate" 
       # button is not present. This means that all is left is 1 or more
       # buttons to get the actual reports
-      def ready?
-        div = last_cell.search("div")[-1]
-        # Ready if the data exists at all, and it's not requestable
-        data_exists?(div) && !data_requestable?(div)
+      def requestable_report?
+        !last_cell.search(".regenerateButton").empty?
+      end
+
+      def not_settled_report?
+        text = last_div.text
+
+        # Is the report not settled yet? (in pending-like state)
+        ["(Processing)", "(Open)", "In Progress"].any? do |report_state|
+          text.include?(report_state)
+        end
       end
 
       def deposit_amount
@@ -66,17 +73,8 @@ module Compactor
 
       private
 
-      # If the period has the "regenerate" button, then it's requestable.
-      def data_requestable?(div)
-        !!div.search(".regenerateButton")
-      end
-
-      # If the period is one of the "pending" states from an Amazon point
-      # of view, then we cannot fetch the data. The data doesn't exist yet.
-      def data_exists?(div)
-        ignorable_periods = ["(Processing)", "(Open)", "In Progress"]
-
-        !ignorable_periods.any? { |ignore_text| div.text.include?(ignore_text) }
+      def last_div
+        last_cell.search("div")[-1]
       end
 
       def fetch_deposit_amount
@@ -92,22 +90,17 @@ module Compactor
         @last_cell ||= @node.search("td")[-1]
       end
 
-      private
-
-      def index_of_xml_button(buttons)
+      def index_of_button(buttons)
         raise MissingReportButtons if buttons.blank? # no buttons at all!
 
         buttons.each_with_index do |button, index|
+          # XML is preferred
           return index if button.node.search(".button_label").text == "Download XML"
         end
 
-        raise MissingXmlReport # failed to find an xml button on the collection of buttons
-      end
-
-      def has_xml_button?(buttons)
-        return false if buttons.blank?
-
-        buttons.any? { |button| button.node.search(".button_label").text == "Download XML" }
+        # No XML, look for another type of report, use the first one, whatever
+        # the type
+        0
       end
     end
   end
