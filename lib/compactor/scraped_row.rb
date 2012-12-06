@@ -45,18 +45,18 @@ module Compactor
         })
       end
 
+      # A settlement period (row) is considered ready to be parsed
+      # if it's not processing, open or in progress. Also the "regenerate" 
+      # button is not present. This means that all is left is 1 or more
+      # buttons to get the actual reports
       def ready?
         div = last_cell.search("div")[-1]
-        text = div.text
-
-        ignorable_periods = ["(Processing)", "(Open)", "In Progress"]
-        !ignorable_periods.any? { |ignore_text| text.include?(ignore_text) &&
-          div.search(".regenerateButton").blank? }
+        # Ready if the data exists at all, and it's not requestable
+        data_exists?(div) && !data_requestable?(div)
       end
 
       def deposit_amount
         @deposit_amount = fetch_deposit_amount if !@deposit_amount
-
         @deposit_amount
       end
 
@@ -65,6 +65,19 @@ module Compactor
       end
 
       private
+
+      # If the period has the "regenerate" button, then it's requestable.
+      def data_requestable?(div)
+        !!div.search(".regenerateButton")
+      end
+
+      # If the period is one of the "pending" states from an Amazon point
+      # of view, then we cannot fetch the data. The data doesn't exist yet.
+      def data_exists?(div)
+        ignorable_periods = ["(Processing)", "(Open)", "In Progress"]
+
+        !ignorable_periods.any? { |ignore_text| div.text.include?(ignore_text) }
+      end
 
       def fetch_deposit_amount
         deposit_cell = @node.search("td")[-2]
