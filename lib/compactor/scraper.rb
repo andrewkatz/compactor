@@ -70,9 +70,9 @@ module Compactor
       def get_balance
         go_to_past_settlements('', '')
         return 0.0 if page_has_no_results?
-        open_row = report_rows.detect { |row| !row.ready? }
-        return 0.0 if open_row.nil?
-        open_row.deposit_amount
+        open_row = report_rows.detect { |row| row.not_settled_report? }
+        
+        open_row.nil? ? 0.0 : open_row.deposit_amount
       end
 
       def reports(from, to)
@@ -243,7 +243,7 @@ module Compactor
           row = row.reload
           if row.nil?
             true
-          elsif row.can_download_xml_report?
+          elsif row.can_download_report?
             add_to_collection(reports, row)
           end
         end
@@ -278,9 +278,9 @@ module Compactor
         return reports if page_has_no_results?
 
         report_rows.each do |row|
-          if row.can_download_xml_report?
+          if row.can_download_report?
             add_to_collection(reports, row)
-          elsif row.ready?
+          elsif row.requestable_report?
             @mechanize.transact do
               row.request_report
               reports_to_watch << row
