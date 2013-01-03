@@ -2,13 +2,13 @@
 
 module Compactor
   module Amazon
-    class AddressParseFailure < StandardError; end
-    class AuthenticationError < StandardError; end
-    class LockedAccountError  < StandardError; end
-    class MissingRow          < StandardError; end
-    class NoMarketplacesError < StandardError; end
-    class NotProAccountError  < StandardError; end
-    class UnknownReportType   < StandardError; end
+    class AddressParseFailure  < StandardError; end
+    class AuthenticationError  < StandardError; end
+    class LockedAccountError   < StandardError; end
+    class MissingRow           < StandardError; end
+    class NoMarketplacesError  < StandardError; end
+    class NotProAccountError   < StandardError; end
+    class UnknownReportType    < StandardError; end
     class MissingXmlReport     < StandardError; end
     class MissingReportButtons < StandardError; end
 
@@ -120,7 +120,7 @@ module Compactor
         results << [ 'Amazon Seller Account', AMAZON_COM_MARKETPLACE_ID ] if name
 
         name, marketplace_id = marketplaces.detect do |n, m_id|
-           n == 'Your Checkout Website' && !m_id.nil?
+          (n == 'Your Checkout Website' || n == "Checkout by Amazon (Production View)") && !m_id.nil?
         end
         results << [ 'Checkout By Amazon', marketplace_id ] if name
 
