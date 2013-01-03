@@ -51,7 +51,7 @@ def scrape(email, password, from, to)
   end
 end
 
-scrape "me@there.com", :password => "secret", DateTime.parse("1/1/2012"), DateTime.now
+scrape "me@there.com", "secret", DateTime.parse("1/1/2012"), DateTime.now
 ```
 
 ## Contributing
