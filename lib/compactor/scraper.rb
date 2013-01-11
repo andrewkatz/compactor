@@ -54,7 +54,7 @@ module Compactor
           return result
         end
 
-        marketplace_name = @mechanize.page.search("#market_switch")
+        marketplace_name = @mechanize.page.search("#market_switch .merch-site-span")
         if marketplace_name
           return [ [ marketplace_name.text.strip, nil ] ]
         end
@@ -71,7 +71,7 @@ module Compactor
         go_to_past_settlements('', '')
         return 0.0 if page_has_no_results?
         open_row = report_rows.detect { |row| row.not_settled_report? }
-        
+
         open_row.nil? ? 0.0 : open_row.deposit_amount
       end
 
