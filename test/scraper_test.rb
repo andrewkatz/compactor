@@ -2,11 +2,25 @@ require File.dirname(__FILE__) + '/test_helper'
 require File.dirname(__FILE__) + '/../lib/compactor'
 
 class ScraperTest < Test::Unit::TestCase
-  def test_should_timeout_if_element_cannot_be_found
+  def test_should_not_find_elements_that_do_not_exist
     VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
-      reports = scraper.reports("12/28/2011", "12/30/2011")
-      scraper.send(:wait_for_element, 1) {"foo"}
+      mechanize = scraper.instance_variable_get("@mechanize")
+      element = scraper.send(:wait_for_element, 1) do
+        mechanize.page.search(".something-that-does-not-exist")
+      end
+      assert_nil element
+    end
+  end
+
+  def test_should_find_elements_that_do_exist
+    VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
+      scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
+      mechanize = scraper.instance_variable_get("@mechanize")
+      element = scraper.send(:wait_for_element, 1) do
+        mechanize.page.forms
+      end
+      assert Mechanize::Form === element[0]
     end
   end
 

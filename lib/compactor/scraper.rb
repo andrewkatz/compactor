@@ -213,6 +213,8 @@ module Compactor
           return element unless element.blank?
           sleep 2**attempt # => 1 sec, 2 secs, 4, 8, 16, 32, etc
         end
+
+        nil # no element found
       end
 
       def rescue_empty_results(&block)
@@ -281,7 +283,7 @@ module Compactor
 
       def page_has_no_results?
         data_display_element =
-          wait_for_element { @mechanize.page.search!(".data-display") }
+          wait_for_element { @mechanize.page.search(".data-display") }
 
         fail ReportLoadingTimeout if data_display_element.blank?
 
