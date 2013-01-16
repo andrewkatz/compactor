@@ -2,6 +2,14 @@ require File.dirname(__FILE__) + '/test_helper'
 require File.dirname(__FILE__) + '/../lib/compactor'
 
 class ScraperTest < Test::Unit::TestCase
+  def test_should_timeout_if_element_cannot_be_found
+    VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
+      scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
+      reports = scraper.reports("12/28/2011", "12/30/2011")
+      scraper.send(:wait_for_element, 1) {"foo"}
+    end
+  end
+
   def test_should_raise_error_with_bad_login
     VCR.use_cassette("AmazonReportScraper/with_bad_login/raise_error") do
       assert_raises Compactor::Amazon::AuthenticationError do
@@ -9,7 +17,7 @@ class ScraperTest < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_should_be_xml_if_button_label_is_Download_XML
     assert_equal :xml, Compactor::Amazon::ReportScraper.report_type("Download XML")
   end
@@ -27,7 +35,7 @@ class ScraperTest < Test::Unit::TestCase
       Compactor::Amazon::ReportScraper.report_type("Download PDF")
     end
   end
- 
+
   def test_should_be_able_to_get_buyer_name_and_shipping_address_for_orders
     VCR.use_cassette("AmazonReportScraper/with_good_login/get_orders") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
@@ -46,7 +54,7 @@ class ScraperTest < Test::Unit::TestCase
       }, orders)
     end
   end
- 
+
   def test_should_support_addresses_where_the_street_address_line_does_not_start_with_a_number
     VCR.use_cassette("AmazonReportScraper/with_good_login/shipping_address_not_starting_with_number") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
@@ -65,7 +73,7 @@ class ScraperTest < Test::Unit::TestCase
       }, orders)
     end
   end
- 
+
   def test_should_handle_large_reports
     VCR.use_cassette("AmazonReportScraper/with_good_login/get_orders_big") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
@@ -93,7 +101,7 @@ class ScraperTest < Test::Unit::TestCase
       assert_equal( true, reports.any? { |type, reports| !reports.empty? } )
     end
   end
- 
+
   def test_should_find_reports_in_more_than_on_page
     VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/multiple_pages") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
@@ -102,7 +110,7 @@ class ScraperTest < Test::Unit::TestCase
       assert_equal( true, reports.any? { |type, reports| !reports.empty? } )
     end
   end
-  
+
   def test_should_find_no_reports_if_not_in_date_range
     VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/no_reports") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")

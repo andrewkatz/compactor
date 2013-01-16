@@ -11,6 +11,7 @@ module Compactor
     class UnknownReportType    < StandardError; end
     class MissingXmlReport     < StandardError; end
     class MissingReportButtons < StandardError; end
+    class ReportLoadingTimeout < StandardError; end
 
     ATTEMPTS_BEFORE_GIVING_UP = 15 # give up after 20 minutes
     MARKETPLACE_HOMEPAGE      = "https://sellercentral.amazon.com/gp/homepage.html"
@@ -205,6 +206,15 @@ module Compactor
         fail Compactor::Amazon::UnknownReportType
       end
 
+      # 6 attempts make it wait at most a minute, or close enough to it
+      def wait_for_element(attempts=6, &block)
+        attempts.times do |attempt|
+          element = yield
+          return element unless element.blank?
+          sleep 2**attempt # => 1 sec, 2 secs, 4, 8, 16, 32, etc
+        end
+      end
+
       def rescue_empty_results(&block)
         3.times do
           yield
@@ -236,7 +246,8 @@ module Compactor
       end
 
       def get_reports_to_watch(reports_to_watch, reports, count=0)
-        return if reports_to_watch.empty? || timeout_fetching_reports(reports_to_watch, reports, count)
+        return if reports_to_watch.empty? ||
+                  timeout_fetching_reports(reports_to_watch, reports, count)
 
         rescue_empty_results { @mechanize.get @mechanize.page.uri }
         reports_to_watch.reject! do |row|
@@ -269,7 +280,12 @@ module Compactor
       end
 
       def page_has_no_results?
-        @mechanize.page.search!(".data-display").text.include? "No results found"
+        data_display_element =
+          wait_for_element { @mechanize.page.search!(".data-display") }
+
+        fail ReportLoadingTimeout if data_display_element.blank?
+
+        data_display_element.text.include? "No results found"
       end
 
       def get_reports_in_page
