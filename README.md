@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/julio/compactor.png)](http://travis-ci.org/julio/compactor)
 
+[![Gem Version](https://badge.fury.io/rb/compactor.png)](http://badge.fury.io/rb/compactor)
+
 Scrape Amazon Seller Central
 
 ## Installation
