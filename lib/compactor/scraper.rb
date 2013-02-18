@@ -224,16 +224,8 @@ module Compactor
         end
       end
 
-      def timeout_fetching_reports(reports_to_watch, reports, count)
-        if count > ATTEMPTS_BEFORE_GIVING_UP
-          reports_downloaded     = reports.map { |type, reports| reports.size }.inject(:+)
-          reports_not_downloaded = reports_to_watch.size
-          total_reports          = reports_not_downloaded + reports_downloaded
-
-          true
-        else
-          false
-        end
+      def timeout_fetching_reports(count)
+        count > ATTEMPTS_BEFORE_GIVING_UP
       end
 
       # Find the report to download from a row, and add it
@@ -248,8 +240,7 @@ module Compactor
       end
 
       def get_reports_to_watch(reports_to_watch, reports, count=0)
-        return if reports_to_watch.empty? ||
-                  timeout_fetching_reports(reports_to_watch, reports, count)
+        return if reports_to_watch.empty? || timeout_fetching_reports(count)
 
         rescue_empty_results { @mechanize.get @mechanize.page.uri }
         reports_to_watch.reject! do |row|
