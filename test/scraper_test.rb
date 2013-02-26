@@ -76,11 +76,11 @@ class ScraperTest < Test::Unit::TestCase
 
       assert_equal({
         "105-1753716-0471420" => {
-          "BuyerName" => "Lisa M Strand",
+          "BuyerName"       => "Lisa M Strand",
           "ShippingAddress" => {
-            "street" => "W190S6321 Preston Ln",
-            "city" => "Muskego",
-            "state" => "WI",
+            "street"     => "W190S6321 Preston Ln",
+            "city"       => "Muskego",
+            "state"      => "WI",
             "postalcode" => "53150-8512"
           }
         }
