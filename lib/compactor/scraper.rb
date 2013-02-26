@@ -86,18 +86,22 @@ module Compactor
         tr = @mechanize.page.search!("//tr[@class='list-row']/td[@class='data-display-field'][text()=\"Contact Buyer:\"]").first.parent
         td = tr.search!("td[2]")
         td.text.strip
+      rescue => e
+        ""
       end
 
       def shipping_address
         td = @mechanize.page.search!("//tr[@class='list-row']/td[@class='data-display-field']/strong[text()='Shipping Address:']").first.parent
         addr_lines = td.children.map(&:text).reject { |l| l.blank? || l =~ /^Shipping Address/ }
         parse_address_lines!(addr_lines)
+      rescue => e
+        ""
       end
 
       def payee_details(order_id)
         @mechanize.get order_detail_url(order_id)
         order = {}
-        order["BuyerName"]       = buyer_name
+        order["BuyerName"] = buyer_name
         order["ShippingAddress"] = shipping_address
 
         order
