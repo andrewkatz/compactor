@@ -5,13 +5,14 @@ module Compactor
     class AddressParseFailure  < StandardError; end
     class AuthenticationError  < StandardError; end
     class LockedAccountError   < StandardError; end
+    class MissingReportButtons < StandardError; end
     class MissingRow           < StandardError; end
+    class MissingXmlReport     < StandardError; end
     class NoMarketplacesError  < StandardError; end
     class NotProAccountError   < StandardError; end
-    class UnknownReportType    < StandardError; end
-    class MissingXmlReport     < StandardError; end
-    class MissingReportButtons < StandardError; end
     class ReportLoadingTimeout < StandardError; end
+    class ReportTotalsMismatch < StandardError; end
+    class UnknownReportType    < StandardError; end
 
     ATTEMPTS_BEFORE_GIVING_UP = 15 # give up after 20 minutes
     MARKETPLACE_HOMEPAGE      = "https://sellercentral.amazon.com/gp/homepage.html"
@@ -243,7 +244,7 @@ module Compactor
       # that the current page stays the current page.
       def add_to_collection(reports, row)
         @mechanize.transact do
-          report_type, report = row.download_report
+          report_type, report = row.download_report!(true) # fail if bad total
           reports[report_type] ||= []
           reports[report_type] << report
         end

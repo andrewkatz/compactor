@@ -2,7 +2,7 @@ module Compactor
   module Amazon
     class ScrapedRow
       def initialize(node, mechanize)
-        @node = node
+        @node      = node
         @mechanize = mechanize
       end
 
@@ -14,6 +14,15 @@ module Compactor
         last_cell.search(".secondarySmallButton").map do |ele|
           Mechanize::Page::Link.new(ele.parent, @mechanize, @mechanize.page)
         end
+      end
+
+      def download_report!(validate=false)
+        r_type, r_data = download_report
+
+        # fail if Amazon is saying that total is X but the calculated total is Y
+        validate!(r_type, r_data) if validate
+
+        [r_type, r_data]
       end
 
       def download_report
@@ -72,6 +81,24 @@ module Compactor
       end
 
       private
+
+      def validate!(r_type, r_data)
+        return true unless r_type == :xml # only check xml for now
+
+        parser = Compactor::Amazon::XmlParser.new(r_data)
+        unless parser.valid?
+          error_message = \
+            "Amazon summary amount different from calculated total amount. {" +
+              "type: XML, " +
+              "expected total: $#{"%.2f" % parser.expected_total}, " +
+              "calculated total: $#{"%.2f" % parser.calculated_total}, " +
+              "difference: $#{"%.2f" % (parser.expected_total - parser.calculated_total).abs}" +
+            "}"
+          raise ReportTotalsMismatch.new(error_message)
+        end
+
+        true
+      end
 
       def last_div
         last_cell.search("div")[-1]
