@@ -25,6 +25,7 @@ module Compactor
         @mechanize.max_history                   = 2
         @mechanize.agent.http.verify_mode        = OpenSSL::SSL::VERIFY_NONE
         @mechanize.agent.http.reuse_ssl_sessions = false
+        @validate_totals                         = user_credentials[:validate_totals]
 
         randomize_user_agent!
         login_to_seller_central user_credentials[:email], user_credentials[:password]
@@ -244,7 +245,7 @@ module Compactor
       # that the current page stays the current page.
       def add_to_collection(reports, row)
         @mechanize.transact do
-          report_type, report = row.download_report!(true) # fail if bad total
+          report_type, report = row.download_report!(@validate_totals)
           reports[report_type] ||= []
           reports[report_type] << report
         end
