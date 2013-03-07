@@ -61,9 +61,9 @@ class ScrapedRowTest < Test::Unit::TestCase
     report_data = <<-XML
     <xml>
       <report>
-      <TotalAmount>10</TotalAmount>
-      <Amount>5</Amount>
-      <Amount>5</Amount>
+        <TotalAmount>10</TotalAmount>
+        <Amount>5</Amount>
+        <Amount>5</Amount>
       </report>
     </xml>
     XML
@@ -75,9 +75,9 @@ class ScrapedRowTest < Test::Unit::TestCase
     report_data = <<-XML
     <xml>
       <report>
-      <TotalAmount>10</TotalAmount>
-      <Amount>5</Amount>
-      <Amount>4</Amount>
+        <TotalAmount>10</TotalAmount>
+        <Amount>5</Amount>
+        <Amount>4</Amount>
       </report>
     </xml>
     XML

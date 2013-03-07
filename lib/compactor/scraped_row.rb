@@ -88,7 +88,7 @@ module Compactor
         parser = Compactor::Amazon::XmlParser.new(r_data)
         unless parser.valid?
           error_message = \
-            "Amazon summary amount different from calculated total amount. {" +
+            "Amazon generated report has a TotalAmount discrepancy. {" +
               "type: XML, " +
               "expected total: $#{"%.2f" % parser.expected_total}, " +
               "calculated total: $#{"%.2f" % parser.calculated_total}, " +

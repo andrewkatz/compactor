@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    compactor (0.3.3)
+    compactor (0.3.4)
       jruby-openssl (= 0.7.3)
       mechanize (= 2.4)
       nokogiri (>= 1.5.0, < 1.5.3)

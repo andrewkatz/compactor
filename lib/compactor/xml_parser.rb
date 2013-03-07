@@ -7,7 +7,7 @@ module Compactor
       end
       
       def valid?
-        expected_total == calculated_total
+        (expected_total.abs - calculated_total.abs).abs < 0.009
       end
       
       private
