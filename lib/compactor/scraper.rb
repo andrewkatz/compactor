@@ -103,11 +103,11 @@ module Compactor
       def payee_details(order_id)
         @mechanize.get order_detail_url(order_id)
         order = {}
-        order["BuyerName"] = buyer_name
+        order["BuyerName"]       = buyer_name
         order["ShippingAddress"] = shipping_address
-
         order
       rescue => e
+        nil
       end
 
       def get_orders(order_ids)
