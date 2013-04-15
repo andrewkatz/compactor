@@ -21,7 +21,7 @@ module Compactor
 
     class ReportScraper
       def initialize(user_credentials={})
-        @mechanize = Mechanize.new
+        @mechanize = agent
         @mechanize.max_file_buffer               = 4 * 1024 * 1024
         @mechanize.max_history                   = 2
         @mechanize.agent.http.verify_mode        = OpenSSL::SSL::VERIFY_NONE
@@ -120,6 +120,10 @@ module Compactor
       end
 
       private
+
+      def agent
+        Mechanize.new
+      end
 
       def slowdown_like_a_human(count)
         sleep count ** 2
@@ -220,7 +224,7 @@ module Compactor
       end
 
       # 6 attempts make it wait at most a minute, or close enough to it
-      def wait_for_element(attempts=6, &block)
+      def wait_for_element(attempts=default_number_of_attempts, &block)
         attempts.times do |attempt|
           element = yield
           return element unless element.blank?
@@ -228,6 +232,10 @@ module Compactor
         end
 
         nil # no element found
+      end
+
+      def default_number_of_attempts
+        6
       end
 
       def rescue_empty_results(&block)
@@ -286,8 +294,7 @@ module Compactor
       end
 
       def page_has_no_results?
-        data_display_element =
-          wait_for_element { @mechanize.page.search(".data-display") }
+        data_display_element = @mechanize.page.search(".data-display")
 
         fail ReportLoadingTimeout if data_display_element.blank?
 
@@ -320,8 +327,8 @@ module Compactor
       end
 
       def login_to_seller_central(email, password)
-        @mechanize.get MARKETPLACE_HOMEPAGE
         form = wait_for_element do
+          @mechanize.get MARKETPLACE_HOMEPAGE
           @mechanize.page.forms.first
         end
         raise Compactor::Amazon::LoginFormNotFoundError if form.blank?
