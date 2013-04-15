@@ -2,17 +2,18 @@
 
 module Compactor
   module Amazon
-    class AddressParseFailure  < StandardError; end
-    class AuthenticationError  < StandardError; end
-    class LockedAccountError   < StandardError; end
-    class MissingReportButtons < StandardError; end
-    class MissingRow           < StandardError; end
-    class MissingXmlReport     < StandardError; end
-    class NoMarketplacesError  < StandardError; end
-    class NotProAccountError   < StandardError; end
-    class ReportLoadingTimeout < StandardError; end
-    class ReportTotalsMismatch < StandardError; end
-    class UnknownReportType    < StandardError; end
+    class AddressParseFailure    < StandardError; end
+    class AuthenticationError    < StandardError; end
+    class LockedAccountError     < StandardError; end
+    class LoginFormNotFoundError < StandardError; end
+    class MissingReportButtons   < StandardError; end
+    class MissingRow             < StandardError; end
+    class MissingXmlReport       < StandardError; end
+    class NoMarketplacesError    < StandardError; end
+    class NotProAccountError     < StandardError; end
+    class ReportLoadingTimeout   < StandardError; end
+    class ReportTotalsMismatch   < StandardError; end
+    class UnknownReportType      < StandardError; end
 
     ATTEMPTS_BEFORE_GIVING_UP = 15 # give up after 20 minutes
     MARKETPLACE_HOMEPAGE      = "https://sellercentral.amazon.com/gp/homepage.html"
@@ -320,7 +321,11 @@ module Compactor
 
       def login_to_seller_central(email, password)
         @mechanize.get MARKETPLACE_HOMEPAGE
-        form = @mechanize.page.forms.first
+        form = wait_for_element do
+          @mechanize.page.forms.first
+        end
+        raise Compactor::Amazon::LoginFormNotFoundError if form.blank?
+
         form.email    = email
         form.password = password
         form.submit

@@ -2,19 +2,14 @@ PATH
   remote: .
   specs:
     compactor (0.3.6)
-      jruby-openssl (= 0.7.3)
       mechanize (= 2.4)
-      nokogiri (>= 1.5.0, < 1.5.3)
 
 GEM
   remote: http://rubygems.org/
   specs:
-    bouncy-castle-java (1.5.0146.1)
-    domain_name (0.5.7)
-      unf (~> 0.0.3)
+    domain_name (0.5.11)
+      unf (>= 0.0.5, < 1.0.0)
     fakeweb (1.3.0)
-    jruby-openssl (0.7.3)
-      bouncy-castle-java
     mechanize (2.4)
       domain_name (~> 0.5, >= 0.5.1)
       mime-types (~> 1.17, >= 1.17.2)
@@ -24,19 +19,23 @@ GEM
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (~> 0.0, >= 0.0.9)
     metaclass (0.0.1)
-    mime-types (1.19)
+    mime-types (1.22)
     mocha (0.12.1)
       metaclass (~> 0.0.1)
-    net-http-digest_auth (1.2.1)
+    net-http-digest_auth (1.3)
     net-http-persistent (2.8)
-    nokogiri (1.5.2-java)
+    nokogiri (1.5.9)
+    nokogiri (1.5.9-java)
     ntlm-http (0.1.1)
     rake (10.0.2)
     rcov (0.9.11)
     rcov (0.9.11-java)
-    unf (0.0.5-java)
+    unf (0.1.1)
+      unf_ext
+    unf (0.1.1-java)
+    unf_ext (0.0.6)
     vcr (2.0.1)
-    webrobots (0.0.13)
+    webrobots (0.1.1)
 
 PLATFORMS
   java

@@ -5,7 +5,7 @@ class ScraperTest < Test::Unit::TestCase
   def setup
     Compactor::Amazon::XmlParser.any_instance.stubs(:valid?).returns(true)
   end
-  
+
   def test_should_not_find_elements_that_do_not_exist
     VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
       scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
@@ -25,6 +25,16 @@ class ScraperTest < Test::Unit::TestCase
         mechanize.page.forms
       end
       assert Mechanize::Form === element[0]
+    end
+  end
+
+  def test_should_raise_error_if_cannot_find_login_form
+    Mechanize::Page.any_instance.stubs(:forms).returns([])
+    Compactor::Amazon::ReportScraper.any_instance.stubs(:wait_for_element).returns(nil)
+    VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
+      assert_raises Compactor::Amazon::LoginFormNotFoundError do
+        Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
+      end
     end
   end
 
