@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/test_helper'
-require File.dirname(__FILE__) + '/../lib/compactor'
+require File.expand_path(File.dirname(__FILE__) + '/test_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/compactor')
 
 class ScraperTest < Test::Unit::TestCase
   def setup
@@ -29,22 +29,10 @@ class ScraperTest < Test::Unit::TestCase
   end
 
   def test_should_raise_error_if_cannot_find_login_form
-    Mechanize::Page.any_instance.stubs(:forms).returns([])
-    Compactor::Amazon::ReportScraper.any_instance.stubs(:wait_for_element).returns(nil)
+    Mechanize::Form.any_instance.expects(:[]).with("email").returns(nil)
+    Compactor::Amazon::ReportScraper.any_instance.stubs(:default_number_of_attempts).returns(1)
     VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
       assert_raises Compactor::Amazon::LoginFormNotFoundError do
-        Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
-      end
-    end
-  end
-
-  def test_should_still_get_forms_if_first_time_fails
-    Compactor::Amazon::ReportScraper.any_instance.stubs(:agent).returns(MockMechanize.new)
-    Compactor::Amazon::ReportScraper.any_instance.stubs(:default_number_of_attempts).returns(2)
-    Compactor::Amazon::ReportScraper.any_instance.stubs(:bad_login?).returns(false)
-    Compactor::Amazon::ReportScraper.any_instance.stubs(:locked_account?).returns(false)
-    VCR.use_cassette("AmazonReportScraper/with_good_login/find_reports/reports_to_request") do
-       assert_nothing_raised do
         Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
       end
     end
@@ -228,31 +216,6 @@ class ScraperTest < Test::Unit::TestCase
     VCR.use_cassette("AmazonReportScraper/with_locked_account/raise_error") do
       assert_raises Compactor::Amazon::LockedAccountError do
         scraper = Compactor::Amazon::ReportScraper.new(:email => "far@far.away", :password => "test")
-      end
-    end
-  end
-
-  class MockMechanize < Mechanize
-    def get(url)
-      def get(url)
-        @page = MockMechanizePageWithForms.new # other times
-      end
-      @page = MockMechanizePageWithNoForms.new # first time
-    end
-
-    def page
-      @page
-    end
-
-    class MockMechanizePageWithForms
-      def forms
-        [OpenStruct.new(:email => nil, :password => nil, :submit => nil), OpenStruct.new(:email => nil, :password => nil, :submit => nil)]
-      end
-    end
-
-    class MockMechanizePageWithNoForms
-      def forms
-        []
       end
     end
   end

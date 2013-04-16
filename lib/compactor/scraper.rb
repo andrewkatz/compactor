@@ -327,12 +327,14 @@ module Compactor
       end
 
       def login_to_seller_central(email, password)
-        form = wait_for_element do
+        email_field_exists = wait_for_element do
           @mechanize.get MARKETPLACE_HOMEPAGE
-          @mechanize.page.forms.first
+          first_form = @mechanize.page.forms.first
+          !first_form["email"].nil?
         end
-        raise Compactor::Amazon::LoginFormNotFoundError if form.blank?
+        raise Compactor::Amazon::LoginFormNotFoundError unless email_field_exists
 
+        form = @mechanize.page.forms.first
         form.email    = email
         form.password = password
         form.submit
